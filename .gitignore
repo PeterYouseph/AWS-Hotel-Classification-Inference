@@ -132,3 +132,6 @@ dist
 
 # ambiente virtual
 .venv/
+
+# Adicionando o config.json de configurações do projeto para o gitignore
+config.json
