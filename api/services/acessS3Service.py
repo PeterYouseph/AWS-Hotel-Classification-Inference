@@ -1,6 +1,6 @@
 import json
 import boto3
-import pickle
+import tarfile
 import os
 from dotenv import load_dotenv
 
@@ -20,24 +20,25 @@ class ModelManager:
         
     def download_model(self):
         # Definição de caminho para o arquivo local do modelo
-        local_path = '/tmp/modelo.pkl'
+        local_path = './assets/models/model.tar.gz'
+        download_dir = './assets/models/'
         # Faz o download do arquivo do S3
         self.s3.download_file(self.bucket_name, self.model_key, local_path)
         # Carrega o modelo do arquivo local
-        with open(local_path, 'rb') as file:
-            model = pickle.load(file)
-        return model
+        # Extract compressed file
+        compressed_model = tarfile.open('./assets/models/model.tar.gz','r:gz')
+        compressed_model.extractall(path=download_dir)
+        return download_dir + 'xgboost-model'
 
     def access_bucket(self):
         try:
-            model = self.download_model()
-            
+            model_path = self.download_model()
             # Caso precise resserializar
             # model_base64 = base64.b64encode(pickle.dumps(model)).decode('utf-8')
 
             response = {
                 'statusCode': 200,
-                'body': json.dumps({'model': str(model)})  # Convertendo o modelo para string para JSON
+                'body': json.dumps({'model_path': str(model_path)})  
             }
         except Exception as e:
             response = {
