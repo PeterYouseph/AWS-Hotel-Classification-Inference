@@ -1,41 +1,31 @@
+from datetime import datetime, timezone
 import json
 import aioboto3
 import os
-from datetime import datetime, timezone
-import asyncio
+from dotenv import load_dotenv
 
-async def inferenceLogsToDynamo(event, context):
-    session = aioboto3.Session()
-    async with session.resource('dynamodb') as dynamodb:
-        # Getting table name as an environment variable
-        table_name = os.environ['DYNAMODB_TABLE_NAME']
-        table = dynamodb.Table(table_name)
+# Carrega as variáveis de ambiente
+load_dotenv()
 
-        tasks = []
+# Configura DynamoDB
+DYNAMODB_TABLE_NAME = os.getenv('DYNAMODB_TABLE_NAME')
+AWS_REGION = os.getenv('AWS_REGION')
 
-        for record in event['Records']:
-            payload = json.loads(record['body'])
-            request = payload.get('request', {})
-            response = payload.get('response', {})
+# Inicializa o cliente boto3
+dynamodb_resource = aioboto3.resource('dynamodb', region_name=AWS_REGION)
 
-            # Generating a unique identifier for the log
-            log_id = str(datetime.now(timezone.utc).timestamp()).replace('.', '')
+async def log_access(request_data: dict, response_data: dict):
+    async with dynamodb_resource.Table(DYNAMODB_TABLE_NAME) as table:
+        # Gerar um identificador único para o log
+        log_id = str(datetime.now(timezone.utc).timestamp()).replace('.', '')
 
-            # Preparing the log item
-            item = {
-                'log_id': log_id,
-                'timestamp': datetime.now(timezone.utc).isoformat(),
-                'request': json.dumps(request),
-                'response': json.dumps(response)
-            }
+        # Preparar o item de log
+        item = {
+            'log_id': log_id,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'request': json.dumps(request_data),
+            'response': json.dumps(response_data)
+        }
 
-            # Asynchronously put the log item into the DynamoDB table
-            tasks.append(table.put_item(Item=item))
-
-        # Await all the tasks to complete
-        await asyncio.gather(*tasks)
-
-    return {
-        'statusCode': 200,
-        'body': json.dumps('Inference logged successfully')
-    }
+        # Inserir o item de log na tabela DynamoDB de forma assíncrona
+        await table.put_item(Item=item)
