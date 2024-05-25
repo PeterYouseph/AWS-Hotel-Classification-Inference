@@ -1,5 +1,9 @@
 fastapi
 uvicorn
-pydantic
 boto3
 python-dotenv
+pandas
+sklearning
+xgboost
+numpy
+aioboto3
