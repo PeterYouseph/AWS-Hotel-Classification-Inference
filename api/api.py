@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from predictionService  import predict    
+from controllers.controller import router as controller
 
 app = FastAPI()
 
@@ -16,9 +17,7 @@ app.add_middleware(
 
 
 # endpoint principal para a predição
-@app.post("/api/v1/predict")
-async def predict(request: Request):
-    data = await request.json()
-    response = predict(data)
+app.include_router(controller, tags=["prediction"])
 
-    return response
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
