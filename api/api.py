@@ -1,23 +1,15 @@
 from fastapi import FastAPI
-import uvicorn
-from fastapi.middleware.cors import CORSMiddleware
-from controllers.controller import router as controller
+from controllers.controller import router
 
 app = FastAPI()
 
-# Configurando o CORS
-origins = ["*"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Incluindo as rotas
+app.include_router(router)
 
-
-# endpoint principal para a predição
-app.include_router(controller, tags=["prediction"])
+# Definindo um endpoint raiz simples
+@app.get("/")
+async def read_root():
+    return {"message": "API de predição de clientes"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
