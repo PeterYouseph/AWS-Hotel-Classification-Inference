@@ -1,5 +1,8 @@
 import json
-from acessS3Service import ModelManager
+from services.acessS3Service import ModelManager
+import xgboost as xgb
+import numpy as np 
+
 
 model_manager = ModelManager()
 
@@ -10,26 +13,31 @@ async def model_retrieve():
     else:
         raise Exception(json.loads(response['body'])['error'])
 
+def loadxgboostmodel(model_path):
+    model = xgb.Booster()
+    model.loadmodel(model_path)
+    return model
 
 
 # Função para predizer
 def predict(data):
     try:
-        # Recupera o modelo
-        model_response = model_retrieve()
+        # Recupera o caminho do modelo
+        model_path = model_retrieve()
+        model = loadxgboostmodel(model_path)
 
-        # Verifica se houve erro na resposta
-        if 'error' in model_response['body']:
-            return model_response
-
-        # Obtém o modelo da resposta
-        model = model_response['body'].get('model', None)
+        # Verifica se o modelo foi carregado
         if model is None:
             raise ValueError("Model not found in response")
 
         # Realiza a predição
         prediction = model.predict(data)
-        return json.dumps({"prediction": prediction})
+
+        # Mapear rótulos de volta ao original
+        inverse_label_mapping = {0: 1, 1: 2, 2: 3}
+        predicted_labels = int(inverse_label_mapping.get(np.argmax(prediction, axis=1)[0]))
+
+        return json.dumps({"result": predicted_labels})
 
     except KeyError as ke:
         return {"error": f"KeyError: {str(ke)}"}
