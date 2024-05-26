@@ -3,7 +3,6 @@ uvicorn
 boto3
 python-dotenv
 pandas
-sklearning
+scikit-learn
 xgboost
 numpy
-aioboto3
