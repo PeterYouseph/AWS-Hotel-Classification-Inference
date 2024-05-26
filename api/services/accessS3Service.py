@@ -3,6 +3,7 @@ import boto3
 import tarfile
 import os
 from dotenv import load_dotenv
+from botocore.exceptions import NoCredentialsError
 
 class ModelManager:
     def __init__(self):
@@ -22,23 +23,36 @@ class ModelManager:
         # Definição de caminho para o arquivo local do modelo
         local_path = './assets/models/model.tar.gz'
         download_dir = './assets/models/'
-        # Faz o download do arquivo do S3
-        self.s3.download_file(self.bucket_name, self.model_key, local_path)
-        # Carrega o modelo do arquivo local
-        # Extract compressed file
-        compressed_model = tarfile.open('./assets/models/model.tar.gz','r:gz')
-        compressed_model.extractall(path=download_dir)
-        return download_dir + 'xgboost-model'
+
+        # Certificar que o diretório de download existe
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+
+        try:
+            # Faz o download do arquivo do S3
+            self.s3.download_file(self.bucket_name, self.model_key, local_path)
+            print("Model downloaded successfully")
+        except NoCredentialsError as e:
+            raise Exception("Credentials not available: " + str(e))
+        except Exception as e:
+            raise Exception("Erro ao baixar o modelo: " + str(e))
+
+        try:
+            # Carrega o modelo do arquivo local e extrai os arquivos
+            compressed_model = tarfile.open(local_path, 'r:gz')
+            compressed_model.extractall(path=download_dir)
+        except Exception as e:
+            raise Exception("Erro ao extrair o modelo: " + str(e))
+
+        # Retorna o caminho do modelo extraído
+        return os.path.join(download_dir, 'xgboost-model')
 
     def access_bucket(self):
         try:
             model_path = self.download_model()
-            # Caso precise resserializar
-            # model_base64 = base64.b64encode(pickle.dumps(model)).decode('utf-8')
-
             response = {
                 'statusCode': 200,
-                'body': json.dumps({'model_path': str(model_path)})  
+                'body': json.dumps({'model_path': str(model_path)})
             }
         except Exception as e:
             response = {
@@ -46,4 +60,3 @@ class ModelManager:
                 'body': json.dumps({'error': 'Erro ao baixar o modelo: ' + str(e)})
             }
         return response
-
