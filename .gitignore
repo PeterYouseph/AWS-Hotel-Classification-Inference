@@ -132,6 +132,7 @@ dist
 
 # ambiente virtual
 .venv/
+__pycache__/
 
 # Adicionando o config.json de configurações do projeto para o gitignore
 config.json
