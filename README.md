@@ -4,13 +4,36 @@
 
 ## 📚 Contextualização do projeto
 
+Este projeto utiliza a AWS para treinar um modelo de machine learning que classifica reservas de hotéis em faixas de preço, utilizando o dataset do Kaggle. Os dados são processados e armazenados no DynamoDB, o modelo é treinado no SageMaker e salvo no S3. Um serviço de inferência em Python, desenvolvido com FastAPI, carrega o modelo do S3 e expõe um endpoint para previsões, registrando logs no DynamoDB. O serviço é containerizado com Docker e implantado no Elastic Beanstalk, acessível via API Gateway, garantindo escalabilidade e gerenciamento eficiente.
+
 ## 🖥️ Funcionamento do sistema
+
+- Configuração do ambiente na AWS, incluindo serviços como DynamoDB, SageMaker, S3, Elastic Beanstalk e API Gateway.
+- Leitura dos dados do Kaggle e armazenamento no DynamoDB.
+- Pré-processamento e tratamento dos dados, com salvamento do dataset alterado no DynamoDB.
+- Carregamento dos dados e treinamento do modelo no SageMaker, seguido de salvamento do modelo no S3.
+- Desenvolvimento de um serviço em Python (FastAPI) para receber requisições POST, carregar o modelo salvo no S3, realizar a predição e retornar o resultado.
+- Containerização do serviço com Docker e implantação no Elastic Beanstalk.
 
 ## 🛠️ Tecnologias/Ferramentas utilizadas
 
-### Para a implementação do projeto, foram utilizadas as seguintes tecnologias/ferramentas:
+### Para a implementação do projeto, foram utilizadas as seguintes tecnologias/ferramentas: 
 
-#### Desenvolvimento da lógica da aplicação (Backend e Frontend):
+##### Bibliotecas e modelos do projeto:
+- Random Forest
+- XGBoost
+- fastapi
+- uvicorn
+- boto3
+- python-dotenv
+- pandas
+- scikit-learn
+- xgboost
+- numpy
+- seaborn
+- matplotlib
+- sklearn
+- joblib
 
 ##### Ferramentas para o desenvolvimento, versionamento e *deploy* do projeto:
 
@@ -36,10 +59,37 @@
 
 - ***`./.dockerignore`*** → Arquivo que contém os diretórios e arquivos que serão ignorados pelo Docker.
 
-## 📎 Diagrama de atividades da aplicação
-### Fluxo de funcionamento e consumo da API 
+## 📁 Estrutura da API
 
-## 📌 Como executar o projeto
+```bash
+├── /api
+│   ├── /controllers
+│   │   ├── controller.py
+│   │   ├──__init__.py 
+│   ├── /models
+│   │   ├── _init_.py
+│   │   ├── dataModel.py
+│   ├── /services
+│   │   ├── accessS3Service.py
+│   │   ├── credentialService.py
+│   │   ├── inferenceLogsToDynamo.py
+│   │   └── predictionService.py
+│   └── /utils
+│       ├── requirements.txt
+│       └── api.py
+├── assets
+│   ├── dataset_schema.png
+│   └── sprint4-5.jpg
+├── notebooks
+│   ├── dataset_preprocessing_upload.ipynb
+│   ├── infrastructure_role_settings.ipynb
+│   ├── locally_train_models.ipynb
+│   └── sagemaker_train_model.ipynb
+├──.gitignore
+└── README.md
+```
+
+## 📌 Como executar a API localmente
 
 ### Clone o repositório
 
@@ -57,6 +107,36 @@ $ cd sprints-4-5-pb-aws-marco
 
 ```bash
 $ git checkout grupo-3
+```
+### Entre na pasta da API
+
+```bash
+$ cd api 
+```
+
+### Instale as dependências
+
+```bash
+$ pip install -r requirements.txt
+```
+
+### Execute a API
+
+```bash
+$ python3 api.py
+```
+
+## 📌 Como fazer a requisição
+
+### Faça uma requisição POST para o endpoint <endereço-da-api>/api/v1/predict, o formato da requisição deve ser:
+
+```bash
+{
+    "no_of_adults": 3,
+    "no_of_children": 3,
+    "type_of_meal_plan": "example"
+    ...
+}
 ```
 
 ## 🤯 Dificuldades encontradas 
