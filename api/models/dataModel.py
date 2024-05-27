@@ -5,133 +5,105 @@ from sklearn.preprocessing import StandardScaler
 
 
 # Função para mapear valores categóricos
+# Função para mapear valores categóricos
 def map_categorical_values(data):
+    # Mapeamento de valores categóricos para tipo de plano de refeição
     meal_plan_mapping = {
-        "1": "Meal_Plan_1",
-        "2": "Meal_Plan_2",
-        "3": "Meal_Plan_3",
-        "Not Selected": "Not_Selected"
+        "Meal Plan 1": {"type_of_meal_plan_Meal Plan 1": True, "type_of_meal_plan_Meal Plan 2": False,
+                        "type_of_meal_plan_Meal Plan 3": False, "type_of_meal_plan_Not Selected": False},
+        "Meal Plan 2": {"type_of_meal_plan_Meal Plan 1": False, "type_of_meal_plan_Meal Plan 2": True,
+                        "type_of_meal_plan_Meal Plan 3": False, "type_of_meal_plan_Not Selected": False},
+        "Meal Plan 3": {"type_of_meal_plan_Meal Plan 1": False, "type_of_meal_plan_Meal Plan 2": False,
+                        "type_of_meal_plan_Meal Plan 3": True, "type_of_meal_plan_Not Selected": False},
+        "Not Selected": {"type_of_meal_plan_Meal Plan 1": False, "type_of_meal_plan_Meal Plan 2": False,
+                         "type_of_meal_plan_Meal Plan 3": False, "type_of_meal_plan_Not Selected": True}
     }
-    room_type_mapping = {
-        "1": "Room_Type_1",
-        "2": "Room_Type_2",
-        "3": "Room_Type_3",
-        "4": "Room_Type_4",
-        "5": "Room_Type_5",
-        "6": "Room_Type_6",
-        "7": "Room_Type_7"
-    }
+
+    # Mapeamento de valores categóricos para tipo de segmento de mercado
     market_segment_mapping = {
-        "Aviation": "Aviation",
-        "Complementary": "Complementary",
-        "Corporate": "Corporate",
-        "Offline": "Offline",
-        "Online": "Online"
+        "Aviation": {"market_segment_type_Aviation": True, "market_segment_type_Complementary": False,
+                     "market_segment_type_Corporate": False, "market_segment_type_Offline": False,
+                     "market_segment_type_Online": False},
+        "Complementary": {"market_segment_type_Aviation": False, "market_segment_type_Complementary": True,
+                          "market_segment_type_Corporate": False, "market_segment_type_Offline": False,
+                          "market_segment_type_Online": False},
+        "Corporate": {"market_segment_type_Aviation": False, "market_segment_type_Complementary": False,
+                      "market_segment_type_Corporate": True, "market_segment_type_Offline": False,
+                      "market_segment_type_Online": False},
+        "Offline": {"market_segment_type_Aviation": False, "market_segment_type_Complementary": False,
+                    "market_segment_type_Corporate": False, "market_segment_type_Offline": True,
+                    "market_segment_type_Online": False},
+        "Online": {"market_segment_type_Aviation": False, "market_segment_type_Complementary": False,
+                   "market_segment_type_Corporate": False, "market_segment_type_Offline": False,
+                   "market_segment_type_Online": True}
     }
+
+    # Mapeamento de valores categóricos para tipo de quarto reservado
+    room_type_mapping = {
+        "Room_Type 1": {"room_type_reserved_Room_Type_1": True, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 2": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": True,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 3": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": True, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 4": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": True,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 5": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": True, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 6": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": True,
+                        "room_type_reserved_Room_Type_7": False},
+        "Room_Type 7": {"room_type_reserved_Room_Type_1": False, "room_type_reserved_Room_Type_2": False,
+                        "room_type_reserved_Room_Type_3": False, "room_type_reserved_Room_Type_4": False,
+                        "room_type_reserved_Room_Type_5": False, "room_type_reserved_Room_Type_6": False,
+                        "room_type_reserved_Room_Type_7": True}
+    }
+
+    # Mapeamento de valores categóricos para status de reserva
     booking_status_mapping = {
-        "Yes": "Canceled",
-        "No": "Not_Canceled"
+        "Canceled": {"booking_status_Canceled": True, "booking_status_Not_Canceled": False},
+        "Not_Canceled": {"booking_status_Canceled": False, "booking_status_Not_Canceled": True}
     }
-    
-    data[f'type_of_meal_plan_{meal_plan_mapping[data["type_of_meal_plan"]]}'] = 1
-    data[f'room_type_reserved_{room_type_mapping[data["room_type_reserved"]]}'] = 1
-    data[f'market_segment_type_{market_segment_mapping[data["market_segment_type"]]}'] = 1
-    data[f'booking_status_{booking_status_mapping[data["booking_status_Canceled"]]}'] = 1
-    
-    # Drop original categorical columns
-    data.pop("type_of_meal_plan")
-    data.pop("room_type_reserved")
-    data.pop("market_segment_type")
-    data.pop("booking_status_Canceled")
-    
+
+    # Atualize o dicionário data com os valores mapeados
+    data.update(meal_plan_mapping.get(data["type_of_meal_plan"], {}))
+    data.update(market_segment_mapping.get(data["market_segment_type"], {}))
+    data.update(room_type_mapping.get(data["room_type_reserved"], {}))
+    data.update(booking_status_mapping.get(data["booking_status"], {}))
+
     return data
 
 # Função para processar os dados de entrada
 def preprocess_input(data):
+    # Mapeamento de valores categóricos
     data = map_categorical_values(data)
+    
+    # Criar DataFrame apenas com os campos numéricos
     df = pd.DataFrame([data])
     
-    # Adicionar colunas faltantes com valor 0
-    expected_columns = [
-        'no_of_adults', 'no_of_children', 'no_of_weekend_nights', 'no_of_week_nights', 
-        'required_car_parking_space', 'lead_time', 'arrival_year', 'arrival_month', 
-        'arrival_date', 'repeated_guest', 'no_of_previous_cancellations', 
-        'no_of_previous_bookings_not_canceled', 'no_of_special_requests', 
-        'type_of_meal_plan_Meal_Plan_1', 'type_of_meal_plan_Meal_Plan_2', 
-        'type_of_meal_plan_Meal_Plan_3', 'type_of_meal_plan_Not_Selected', 
-        'room_type_reserved_Room_Type_1', 'room_type_reserved_Room_Type_2', 
-        'room_type_reserved_Room_Type_3', 'room_type_reserved_Room_Type_4', 
-        'room_type_reserved_Room_Type_5', 'room_type_reserved_Room_Type_6', 
-        'room_type_reserved_Room_Type_7', 'market_segment_type_Aviation', 
-        'market_segment_type_Complementary', 'market_segment_type_Corporate', 
-        'market_segment_type_Offline', 'market_segment_type_Online', 
-        'booking_status_Canceled', 'booking_status_Not_Canceled'
-    ]
+    # Remover campos categóricos não convertidos
+    df.drop(columns=["Booking_ID", "type_of_meal_plan", "room_type_reserved", "market_segment_type", "booking_status"], inplace=True)
     
-    for col in expected_columns:
-        if col not in df.columns:
-            df[col] = 0
-
-    # Feature engineering
-    df['total_guests'] = df['no_of_adults'] + df['no_of_children'] + df['no_of_weekend_nights'] + df['no_of_week_nights']
+    # Adicionando total de hóspedes e total de noites
+    df['total_guests'] = df['no_of_adults'] + df['no_of_children']
     df['total_nights'] = df['no_of_weekend_nights'] + df['no_of_week_nights']
-
-    # Normalização das features numéricas
-    numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
-    scaler = StandardScaler()
-    df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
     
-    return xgb.DMatrix(df)
-
-
-# import pandas as pd
-# from sklearn.preprocessing import StandardScaler
-
-# class DataPreprocessor:
-#     def __init__(self):
-#         self.scaler = StandardScaler()
-
-#     def preprocess_data(self, df):
-#         df = self._convert_categorical(df)
-#         df = self._create_label_column(df)
-#         df = self._remove_missing_values(df)
-#         df = self._remove_outliers(df)
-#         df = self._normalize_numerical_features(df)
-#         df = self._create_new_features(df)
-#         return df
-
-#     def _convert_categorical(self, df):
-#         categorical_columns = ['type_of_meal_plan', 'room_type_reserved', 'market_segment_type', 'booking_status']
-#         for col in categorical_columns:
-#             if col in df.columns:
-#                 df = pd.get_dummies(df, columns=[col])
-#         return df
-
-#     def _create_label_column(self, df):
-#         if 'avg_price_per_room' in df.columns:
-#             df['label_avg_price_per_room'] = pd.cut(df['avg_price_per_room'], bins=[0, 85, 115, float('inf')], labels=[1, 2, 3])
-#             df.drop(columns=['avg_price_per_room'], inplace=True)
-#         return df
-
-#     def _remove_missing_values(self, df):
-#         df.dropna(inplace=True)
-#         return df
-
-#     def _remove_outliers(self, df):
-#         numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
-#         Q1 = df[numerical_cols].quantile(0.25)
-#         Q3 = df[numerical_cols].quantile(0.75)
-#         IQR = Q3 - Q1
-#         df = df[~((df[numerical_cols] < (Q1 - 1.5 * IQR)) | (df[numerical_cols] > (Q3 + 1.5 * IQR))).any(axis=1)]
-#         return df
-
-#     def _normalize_numerical_features(self, df):
-#         numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
-#         df[numerical_cols] = self.scaler.fit_transform(df[numerical_cols])
-#         return df
-
-#     def _create_new_features(self, df):
-#         if all(col in df.columns for col in ['no_of_adults', 'no_of_children', 'no_of_weekend_nights', 'no_of_week_nights']):
-#             df['total_guests'] = df['no_of_adults'] + df['no_of_children'] + df['no_of_weekend_nights'] + df['no_of_week_nights']
-#             df['total_nights'] = df['no_of_weekend_nights'] + df['no_of_week_nights']
-#         return df
+    # Excluir a coluna avg_price_per_room
+    df.drop(columns=['avg_price_per_room'], inplace=True)
+    
+    # Normalização das colunas numéricas
+    numeric_columns = ['lead_time', 'arrival_year', 'arrival_month', 'arrival_date', 'no_of_special_requests', 'total_guests', 'total_nights']
+    df[numeric_columns] = StandardScaler().fit_transform(df[numeric_columns])
+    
+    return df
